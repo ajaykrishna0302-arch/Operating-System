@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+void allocate(int block[], int m, int process[], int n, int type) {
+    int b[20], i, j, best;
+
+    for (i = 0; i < m; i++)
+        b[i] = block[i];
+
+    printf("\nProcess\tSize\tBlock\n");
+
+    for (i = 0; i < n; i++) {
+        best = -1;
+
+        for (j = 0; j < m; j++) {
+            if (b[j] >= process[i]) {
+                if (type == 1) {
+                    best = j;
+                    break;
+                }
+                if (best == -1 ||
+                    (type == 2 && b[j] < b[best]) ||
+                    (type == 3 && b[j] > b[best]))
+                    best = j;
+            }
+        }
+
+        if (best != -1) {
+            printf("P%d\t%d\t%d\n", i + 1,
+                   process[i], best + 1);
+            b[best] -= process[i];
+        } else {
+            printf("P%d\t%d\tNot allocated\n",
+                   i + 1, process[i]);
+        }
+    }
+}
+
+int main() {
+    int block[20], process[20], m, n, i;
+
+    printf("Enter number of memory blocks: ");
+    scanf("%d", &m);
+
+    for (i = 0; i < m; i++) {
+        printf("Enter size of block %d: ", i + 1);
+        scanf("%d", &block[i]);
+    }
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        printf("Enter size of process %d: ", i + 1);
+        scanf("%d", &process[i]);
+    }
+
+    printf("\nFIRST FIT");
+    allocate(block, m, process, n, 1);
+
+    printf("\nBEST FIT");
+    allocate(block, m, process, n, 2);
+
+    printf("\nWORST FIT");
+    allocate(block, m, process, n, 3);
+
+    return 0;
+}
